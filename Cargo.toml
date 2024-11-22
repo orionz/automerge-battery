@@ -1,0 +1,30 @@
+[package]
+name = "automerge-battery"
+version = "0.1.0"
+edition = "2021"
+
+[dev-dependencies]
+automerge = { path = "../automerge/rust/automerge" }
+divan = "0.1.15"
+rand = "0.8.5"
+
+[[bench]]
+name = "load_save"
+harness = false
+
+[[bench]]
+name = "bestiary"
+harness = false
+
+[[bench]]
+name = "sync"
+harness = false
+
+[[bench]]
+name = "map"
+harness = false
+
+[[bench]]
+name = "range"
+harness = false
+
