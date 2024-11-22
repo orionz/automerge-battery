@@ -1,6 +1,6 @@
 use automerge::Automerge;
-use automerge_battery::TestItem;
-use divan::AllocProfiler;
+use divan::{ Bencher, AllocProfiler };
+use std::time::Duration;
 
 #[global_allocator]
 static ALLOC: AllocProfiler = AllocProfiler::system();
@@ -12,17 +12,23 @@ fn main() {
 #[divan::bench(args = [ 
   "./benches/embark.automerge",
   "./benches/moby-dick.automerge"
-])]
-fn load(filename: &str) -> TestItem<Automerge> {
+], max_time = Duration::from_secs(3))]
+fn load(bencher: Bencher, filename: &str) {
   let data = std::fs::read(filename).unwrap();
-  TestItem::new(filename, Automerge::load(data.as_slice()).unwrap())
+  bencher.bench_local(|| {
+    Automerge::load(data.as_slice()).unwrap();
+  })
 }
 
 #[divan::bench(args = [
-  load("./benches/embark.automerge"),
-  load("./benches/moby-dick.automerge")
-])]
-fn save(doc: &TestItem<Automerge>) {
-  doc.item.save();
+  "./benches/embark.automerge",
+  "./benches/moby-dick.automerge"
+], max_time = Duration::from_secs(3))]
+fn save(bencher: Bencher, filename: &str) {
+  let data = std::fs::read(filename).unwrap();
+  let doc = Automerge::load(data.as_slice()).unwrap();
+  bencher.bench_local(|| {
+    doc.save();
+  });
 }
 

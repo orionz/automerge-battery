@@ -1,8 +1,8 @@
 use automerge::{transaction::Transactable, Automerge, ObjType, ROOT};
 use rand::distributions::Alphanumeric;
 use rand::{thread_rng, Rng};
-use automerge_battery::TestItem;
-use divan::AllocProfiler;
+use divan::{Bencher, AllocProfiler};
+use std::time::Duration;
 
 #[global_allocator]
 static ALLOC: AllocProfiler = AllocProfiler::system();
@@ -23,16 +23,15 @@ fn random_string(n: u64) -> String {
     rand_string
 }
 
-fn big_paste_doc(n: u64) -> TestItem<Automerge> {
+fn big_paste_doc(n: u64) -> Automerge {
     let mut doc = Automerge::new();
     let mut tx = doc.transaction();
     tx.put(ROOT, "content", random_string(n)).unwrap();
     tx.commit();
-
-    TestItem::new("big_paste_doc",doc)
+    doc
 }
 
-fn poorly_simulated_typing_doc(n: u64) -> TestItem<Automerge> {
+fn poorly_simulated_typing_doc(n: u64) -> Automerge {
     let mut doc = Automerge::new();
 
     let mut tx = doc.transaction();
@@ -46,10 +45,10 @@ fn poorly_simulated_typing_doc(n: u64) -> TestItem<Automerge> {
         tx.commit();
     }
 
-    TestItem::new("poorly_simulated_typing_doc",doc)
+    doc
 }
 
-fn maps_in_maps_doc(n: u64) -> TestItem<Automerge> {
+fn maps_in_maps_doc(n: u64) -> Automerge {
     let mut doc = Automerge::new();
     let mut tx = doc.transaction();
 
@@ -61,10 +60,10 @@ fn maps_in_maps_doc(n: u64) -> TestItem<Automerge> {
     }
 
     tx.commit();
-    TestItem::new("maps_in_maps_doc",doc)
+    doc
 }
 
-fn deep_history_doc(n: u64) -> TestItem<Automerge> {
+fn deep_history_doc(n: u64) -> Automerge {
     let mut doc = Automerge::new();
     for i in 0..n {
         let mut tx = doc.transaction();
@@ -73,26 +72,51 @@ fn deep_history_doc(n: u64) -> TestItem<Automerge> {
         tx.commit();
     }
 
-    TestItem::new("deep_history_doc",doc)
+    doc
 }
 
-#[divan::bench(args=[
-  big_paste_doc(N),
-  poorly_simulated_typing_doc(N),
-  maps_in_maps_doc(N),
-  deep_history_doc(N)
-])]
-fn save(doc: &TestItem<Automerge>) -> TestItem<Vec<u8>> {
-    doc.map(|i| i.save())
+#[derive(Debug)]
+enum Test {
+  BigPaste,
+  MapsInMaps,
+  DeepHistory,
+  PoorlySimulatedTyping,
 }
 
-#[divan::bench(args=[
-  save(&big_paste_doc(N)),
-  save(&poorly_simulated_typing_doc(N)),
-  save(&maps_in_maps_doc(N)),
-  save(&deep_history_doc(N))
-])]
-fn load(save_data: &TestItem<Vec<u8>>) {
-    Automerge::load(save_data.item.as_slice()).unwrap();
+impl Test {
+  fn init(&self) -> Automerge {
+    match self {
+      Self::BigPaste => big_paste_doc(N),
+      Self::MapsInMaps => maps_in_maps_doc(N),
+      Self::DeepHistory => deep_history_doc(N),
+      Self::PoorlySimulatedTyping => poorly_simulated_typing_doc(N),
+    }
+  }
+}
+
+#[divan::bench(args=[ 
+  Test::BigPaste,
+  Test::MapsInMaps,
+  Test::DeepHistory,
+  Test::PoorlySimulatedTyping,
+], max_time = Duration::from_secs(3))]
+fn save(bencher: Bencher, test: &Test) {
+    let doc = test.init();
+    bencher.bench_local(|| -> Vec<u8> {
+      doc.save()
+    })
+}
+
+#[divan::bench(args=[ 
+  Test::BigPaste,
+  Test::MapsInMaps,
+  Test::DeepHistory,
+  Test::PoorlySimulatedTyping,
+], max_time = Duration::from_secs(3))]
+fn load(bencher: Bencher, test: &Test) {
+    let data = test.init().save();
+    bencher.bench_local(|| {
+      Automerge::load(data.as_slice()).unwrap();
+    })
 }
 

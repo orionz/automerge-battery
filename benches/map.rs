@@ -1,14 +1,15 @@
 use automerge::{transaction::Transactable, Automerge, ScalarValue, ROOT};
-use divan::AllocProfiler;
+use std::time::Duration;
+//use divan::AllocProfiler;
 
-#[global_allocator]
-static ALLOC: AllocProfiler = AllocProfiler::system();
+//#[global_allocator]
+//static ALLOC: AllocProfiler = AllocProfiler::system();
 
 fn main() {
     divan::main();
 }
 
-#[divan::bench(args=[100,1000,10_000])]
+#[divan::bench(args=[100,1000], max_time = Duration::from_secs(3))]
 fn repeated_increment(n: u64) -> Automerge {
     let mut doc = Automerge::new();
     let mut tx = doc.transaction();
@@ -20,7 +21,7 @@ fn repeated_increment(n: u64) -> Automerge {
     doc
 }
 
-#[divan::bench(args=[100,1000,10_000])]
+#[divan::bench(args=[100,1000,10_000], max_time = Duration::from_secs(3))]
 fn repeated_put(n: u64) -> Automerge {
     let mut doc = Automerge::new();
     let mut tx = doc.transaction();
@@ -31,7 +32,7 @@ fn repeated_put(n: u64) -> Automerge {
     doc
 }
 
-#[divan::bench(args=[100,1000,10_000])]
+#[divan::bench(args=[100,1000,10_000], max_time = Duration::from_secs(3))]
 fn increasing_put(n: u64) -> Automerge {
     let mut doc = Automerge::new();
     let mut tx = doc.transaction();
@@ -42,7 +43,7 @@ fn increasing_put(n: u64) -> Automerge {
     doc
 }
 
-#[divan::bench(args=[100,1000,10_000])]
+#[divan::bench(args=[100,1000,10_000], max_time = Duration::from_secs(3))]
 fn decreasing_put(n: u64) -> Automerge {
     let mut doc = Automerge::new();
     let mut tx = doc.transaction();
