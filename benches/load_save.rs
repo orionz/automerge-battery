@@ -1,7 +1,7 @@
 use automerge::{transaction::Transactable, Automerge, ObjType, ROOT};
+use divan::{AllocProfiler, Bencher};
 use rand::distributions::Alphanumeric;
 use rand::{thread_rng, Rng};
-use divan::{Bencher, AllocProfiler};
 use std::time::Duration;
 
 #[global_allocator]
@@ -77,46 +77,33 @@ fn deep_history_doc(n: u64) -> Automerge {
 
 #[derive(Debug)]
 enum Test {
-  BigPaste,
-  MapsInMaps,
-  DeepHistory,
-  PoorlySimulatedTyping,
+    BigPaste,
+    MapsInMaps,
+    DeepHistory,
+    PoorlySimulatedTyping,
 }
 
 impl Test {
-  fn init(&self) -> Automerge {
-    match self {
-      Self::BigPaste => big_paste_doc(N),
-      Self::MapsInMaps => maps_in_maps_doc(N),
-      Self::DeepHistory => deep_history_doc(N),
-      Self::PoorlySimulatedTyping => poorly_simulated_typing_doc(N),
+    fn init(&self) -> Automerge {
+        match self {
+            Self::BigPaste => big_paste_doc(N),
+            Self::MapsInMaps => maps_in_maps_doc(N),
+            Self::DeepHistory => deep_history_doc(N),
+            Self::PoorlySimulatedTyping => poorly_simulated_typing_doc(N),
+        }
     }
-  }
 }
 
-#[divan::bench(args=[ 
-  Test::BigPaste,
-  Test::MapsInMaps,
-  Test::DeepHistory,
-  Test::PoorlySimulatedTyping,
-], max_time = Duration::from_secs(3))]
+#[divan::bench(args=[Test::BigPaste,Test::MapsInMaps,Test::DeepHistory,Test::PoorlySimulatedTyping], max_time = Duration::from_secs(3))]
 fn save(bencher: Bencher, test: &Test) {
     let doc = test.init();
-    bencher.bench_local(|| -> Vec<u8> {
-      doc.save()
-    })
+    bencher.bench_local(|| -> Vec<u8> { doc.save() })
 }
 
-#[divan::bench(args=[ 
-  Test::BigPaste,
-  Test::MapsInMaps,
-  Test::DeepHistory,
-  Test::PoorlySimulatedTyping,
-], max_time = Duration::from_secs(3))]
+#[divan::bench(args=[Test::BigPaste,Test::MapsInMaps,Test::DeepHistory,Test::PoorlySimulatedTyping], max_time = Duration::from_secs(3))]
 fn load(bencher: Bencher, test: &Test) {
     let data = test.init().save();
     bencher.bench_local(|| {
-      Automerge::load(data.as_slice()).unwrap();
+        Automerge::load(data.as_slice()).unwrap();
     })
 }
-

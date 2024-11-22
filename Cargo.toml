@@ -7,6 +7,8 @@ edition = "2021"
 automerge = { path = "../automerge/rust/automerge" }
 divan = "0.1.15"
 rand = "0.8.5"
+jzon = "^0.12.5"
+serde_json = "^1.0.128"
 
 [[bench]]
 name = "load_save"
@@ -28,3 +30,6 @@ harness = false
 name = "range"
 harness = false
 
+[[bench]]
+name = "edit_trace"
+harness = false

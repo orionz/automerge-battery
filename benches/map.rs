@@ -53,4 +53,3 @@ fn decreasing_put(n: u64) -> Automerge {
     tx.commit();
     doc
 }
-

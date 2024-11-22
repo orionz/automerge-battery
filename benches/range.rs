@@ -23,8 +23,8 @@ fn doc(n: u64) -> Automerge {
 fn range(bencher: Bencher, n: u64) {
     let doc = doc(n);
     bencher.bench_local(|| {
-      let range = doc.values(ROOT);
-      range.for_each(drop);
+        let range = doc.values(ROOT);
+        range.for_each(drop);
     })
 }
 
@@ -32,8 +32,7 @@ fn range(bencher: Bencher, n: u64) {
 fn range_at(bencher: Bencher, n: u64) {
     let doc = doc(n);
     bencher.bench_local(|| {
-      let range = doc.values_at(ROOT, &doc.get_heads());
-      range.for_each(drop);
+        let range = doc.values_at(ROOT, &doc.get_heads());
+        range.for_each(drop);
     });
 }
-

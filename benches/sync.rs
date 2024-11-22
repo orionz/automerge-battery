@@ -10,10 +10,10 @@ use divan::Bencher;
 //static ALLOC: AllocProfiler = AllocProfiler::system();
 
 fn main() {
-  divan::main();
+    divan::main();
 }
 
-#[derive(Clone, Default )]
+#[derive(Clone, Default)]
 struct DocWithSync {
     doc: Automerge,
     peer_state: sync::State,
@@ -52,17 +52,17 @@ fn many_tx_increasing_put(n: u64) -> DocWithSync {
 
 #[derive(Debug)]
 enum Test {
-  ManyTx(u64),
-  OneTx(u64),
+    ManyTx(u64),
+    OneTx(u64),
 }
 
 impl Test {
-  fn init(&self) -> DocWithSync {
-    match self {
-      Self::ManyTx(n) => many_tx_increasing_put(*n),
-      Self::OneTx(n) => one_tx_increasing_put(*n),
+    fn init(&self) -> DocWithSync {
+        match self {
+            Self::ManyTx(n) => many_tx_increasing_put(*n),
+            Self::OneTx(n) => one_tx_increasing_put(*n),
+        }
     }
-  }
 }
 
 #[divan::bench(args=[
@@ -74,17 +74,16 @@ fn sync(bencher: Bencher, test: &Test) {
     let mut doc1 = doc.clone();
     let mut doc2 = DocWithSync::default();
     bencher.bench_local(|| {
-      while let Some(message1) = doc1.doc.generate_sync_message(&mut doc1.peer_state) {
-          doc2.doc
-              .receive_sync_message(&mut doc2.peer_state, message1)
-              .unwrap();
+        while let Some(message1) = doc1.doc.generate_sync_message(&mut doc1.peer_state) {
+            doc2.doc
+                .receive_sync_message(&mut doc2.peer_state, message1)
+                .unwrap();
 
-          if let Some(message2) = doc2.doc.generate_sync_message(&mut doc2.peer_state) {
-              doc1.doc
-                  .receive_sync_message(&mut doc1.peer_state, message2)
-                  .unwrap()
-          }
-      }
+            if let Some(message2) = doc2.doc.generate_sync_message(&mut doc2.peer_state) {
+                doc1.doc
+                    .receive_sync_message(&mut doc1.peer_state, message2)
+                    .unwrap()
+            }
+        }
     })
 }
-
