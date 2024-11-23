@@ -9,7 +9,7 @@ fn main() {
     divan::main();
 }
 
-#[divan::bench(args=[100,1000], max_time = Duration::from_secs(3))]
+#[divan::bench(args=[100,1000,10_000], max_time = Duration::from_secs(3))]
 fn repeated_increment(n: u64) -> Automerge {
     let mut doc = Automerge::new();
     let mut tx = doc.transaction();
