@@ -1,108 +1,105 @@
-use automerge::{transaction::Transactable, Automerge, ObjType, ROOT};
-use divan::{AllocProfiler, Bencher};
-use rand::distributions::Alphanumeric;
-use rand::{thread_rng, Rng};
+use automerge::Automerge;
+use automerge_battery::{
+    big_paste_doc, big_random_chunky_doc, big_random_doc, maps_in_maps_doc,
+    poorly_simulated_typing_doc,
+};
+use divan::Bencher;
 use std::time::Duration;
 
-#[global_allocator]
-static ALLOC: AllocProfiler = AllocProfiler::system();
-
-const N: u64 = 10_000;
+const N: u64 = 100_000;
 
 fn main() {
     divan::main();
 }
 
-fn random_string(n: u64) -> String {
-    let rand_string: String = thread_rng()
-        .sample_iter(&Alphanumeric)
-        .take(n as usize)
-        .map(char::from)
-        .collect();
-
-    rand_string
-}
-
-fn big_paste_doc(n: u64) -> Automerge {
-    let mut doc = Automerge::new();
-    let mut tx = doc.transaction();
-    tx.put(ROOT, "content", random_string(n)).unwrap();
-    tx.commit();
-    doc
-}
-
-fn poorly_simulated_typing_doc(n: u64) -> Automerge {
-    let mut doc = Automerge::new();
-
-    let mut tx = doc.transaction();
-    let obj = tx.put_object(ROOT, "content", ObjType::Text).unwrap();
-    tx.commit();
-
-    for i in 0..n {
-        let mut tx = doc.transaction();
-        let pos: usize = i.try_into().unwrap();
-        tx.splice_text(&obj, pos, 0, &random_string(1)).unwrap();
-        tx.commit();
-    }
-
-    doc
-}
-
-fn maps_in_maps_doc(n: u64) -> Automerge {
-    let mut doc = Automerge::new();
-    let mut tx = doc.transaction();
-
-    let mut map = ROOT;
-
-    for i in 0..n {
-        // we make a map
-        map = tx.put_object(map, i.to_string(), ObjType::Map).unwrap();
-    }
-
-    tx.commit();
-    doc
-}
-
-fn deep_history_doc(n: u64) -> Automerge {
-    let mut doc = Automerge::new();
-    for i in 0..n {
-        let mut tx = doc.transaction();
-        tx.put(ROOT, "x", i.to_string()).unwrap();
-        tx.put(ROOT, "y", i.to_string()).unwrap();
-        tx.commit();
-    }
-
-    doc
-}
-
-#[derive(Debug)]
-enum Test {
-    BigPaste,
-    MapsInMaps,
-    DeepHistory,
-    PoorlySimulatedTyping,
-}
-
-impl Test {
-    fn init(&self) -> Automerge {
-        match self {
-            Self::BigPaste => big_paste_doc(N),
-            Self::MapsInMaps => maps_in_maps_doc(N),
-            Self::DeepHistory => deep_history_doc(N),
-            Self::PoorlySimulatedTyping => poorly_simulated_typing_doc(N),
-        }
-    }
-}
-
-#[divan::bench(args=[Test::BigPaste,Test::MapsInMaps,Test::DeepHistory,Test::PoorlySimulatedTyping], max_time = Duration::from_secs(3))]
-fn save(bencher: Bencher, test: &Test) {
-    let doc = test.init();
+#[inline(never)]
+#[divan::bench(max_time = Duration::from_secs(3))]
+fn save_big_paste(bencher: Bencher) {
+    let doc = big_paste_doc(N);
     bencher.bench_local(|| -> Vec<u8> { doc.save() })
 }
 
-#[divan::bench(args=[Test::BigPaste,Test::MapsInMaps,Test::DeepHistory,Test::PoorlySimulatedTyping], max_time = Duration::from_secs(3))]
-fn load(bencher: Bencher, test: &Test) {
-    let data = test.init().save();
+#[inline(never)]
+#[divan::bench(max_time = Duration::from_secs(3))]
+fn save_maps_in_maps(bencher: Bencher) {
+    let doc = maps_in_maps_doc(N);
+    bencher.bench_local(|| -> Vec<u8> { doc.save() })
+}
+
+/*
+#[inline(never)]
+#[divan::bench(max_time = Duration::from_secs(3))]
+fn save_deep_history(bencher: Bencher) {
+    let doc = deep_history_doc(N);
+    bencher.bench_local(|| -> Vec<u8> { doc.save() })
+}
+*/
+
+#[inline(never)]
+#[divan::bench(max_time = Duration::from_secs(3))]
+fn save_typing(bencher: Bencher) {
+    let doc = poorly_simulated_typing_doc(N);
+    bencher.bench_local(|| -> Vec<u8> { doc.save() })
+}
+
+#[inline(never)]
+#[divan::bench(max_time = Duration::from_secs(3))]
+fn load_big_paste(bencher: Bencher) {
+    let data = big_paste_doc(N).save();
+    bencher.bench_local(|| {
+        Automerge::load(data.as_slice()).unwrap();
+    })
+}
+
+#[inline(never)]
+#[divan::bench(max_time = Duration::from_secs(3))]
+fn load_chunky(bencher: Bencher) {
+    let data = big_random_chunky_doc(N).save();
+    bencher.bench_local(|| {
+        Automerge::load(data.as_slice()).unwrap();
+    })
+}
+
+#[inline(never)]
+#[divan::bench(max_time = Duration::from_secs(3))]
+fn save_chunky(bencher: Bencher) {
+    let doc = big_random_chunky_doc(N);
+    bencher.bench_local(|| -> Vec<u8> { doc.save() })
+}
+
+#[inline(never)]
+#[divan::bench(max_time = Duration::from_secs(3))]
+fn load_big_random_test(bencher: Bencher) {
+    let data = big_random_doc(N).save();
+    bencher.bench_local(|| {
+        Automerge::load(data.as_slice()).unwrap();
+    })
+}
+
+#[inline(never)]
+#[divan::bench(max_time = Duration::from_secs(3))]
+fn load_maps_in_maps(bencher: Bencher) {
+    let data = maps_in_maps_doc(N).save();
+    bencher.bench_local(|| {
+        Automerge::load(data.as_slice()).unwrap();
+    })
+}
+
+/*
+#[inline(never)]
+#[divan::bench(max_time = Duration::from_secs(3))]
+fn load_deep_history(bencher: Bencher) {
+    let data = deep_history_doc(N).save();
+    bencher.bench_local(|| {
+        Automerge::load(data.as_slice()).unwrap();
+    })
+}
+*/
+
+#[inline(never)]
+#[divan::bench(max_time = Duration::from_secs(3))]
+fn load_typing(bencher: Bencher) {
+    let data = poorly_simulated_typing_doc(N).save();
     bencher.bench_local(|| {
         Automerge::load(data.as_slice()).unwrap();
     })

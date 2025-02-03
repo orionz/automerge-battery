@@ -1,10 +1,11 @@
 use automerge::ObjType;
 use automerge::{transaction::Transactable, AutoCommit, ObjId, ROOT};
-use divan::{AllocProfiler, Bencher};
+use divan::Bencher;
 use std::time::Duration;
 
-#[global_allocator]
-static ALLOC: AllocProfiler = AllocProfiler::system();
+//use divan::{AllocProfiler};
+//#[global_allocator]
+//static ALLOC: AllocProfiler = AllocProfiler::system();
 
 fn main() {
     divan::main();

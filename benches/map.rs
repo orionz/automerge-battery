@@ -9,6 +9,7 @@ fn main() {
     divan::main();
 }
 
+#[inline(never)]
 #[divan::bench(args=[100,1000,10_000], max_time = Duration::from_secs(3))]
 fn repeated_increment(n: u64) -> Automerge {
     let mut doc = Automerge::new();
@@ -32,6 +33,7 @@ fn repeated_put(n: u64) -> Automerge {
     doc
 }
 
+#[inline(never)]
 #[divan::bench(args=[100,1000,10_000], max_time = Duration::from_secs(3))]
 fn increasing_put(n: u64) -> Automerge {
     let mut doc = Automerge::new();
@@ -43,6 +45,7 @@ fn increasing_put(n: u64) -> Automerge {
     doc
 }
 
+#[inline(never)]
 #[divan::bench(args=[100,1000,10_000], max_time = Duration::from_secs(3))]
 fn decreasing_put(n: u64) -> Automerge {
     let mut doc = Automerge::new();
@@ -51,5 +54,19 @@ fn decreasing_put(n: u64) -> Automerge {
         tx.put(ROOT, i.to_string(), i).unwrap();
     }
     tx.commit();
+    doc
+}
+
+#[inline(never)]
+#[divan::bench(args=[100,1000,10_000], max_time = Duration::from_secs(3))]
+fn deep_history(n: u64) -> Automerge {
+    let mut doc = Automerge::new();
+    for i in 0..n {
+        let mut tx = doc.transaction();
+        tx.put(ROOT, "x", i.to_string()).unwrap();
+        tx.put(ROOT, "y", i.to_string()).unwrap();
+        tx.commit();
+    }
+
     doc
 }

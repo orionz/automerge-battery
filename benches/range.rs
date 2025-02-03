@@ -19,7 +19,7 @@ fn doc(n: u64) -> Automerge {
     doc
 }
 
-#[divan::bench(args=[100_000])]
+#[divan::bench(args=[10_000])]
 fn range(bencher: Bencher, n: u64) {
     let doc = doc(n);
     bencher.bench_local(|| {
@@ -28,7 +28,7 @@ fn range(bencher: Bencher, n: u64) {
     })
 }
 
-#[divan::bench(args=[100_000])]
+#[divan::bench(args=[10_000])]
 fn range_at(bencher: Bencher, n: u64) {
     let doc = doc(n);
     bencher.bench_local(|| {
