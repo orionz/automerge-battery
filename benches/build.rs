@@ -5,7 +5,7 @@ use automerge_battery::{
 use divan::{black_box, Bencher};
 use std::time::Duration;
 
-const N: u64 = 10_000;
+const N: u64 = 100_000;
 
 fn main() {
     divan::main();

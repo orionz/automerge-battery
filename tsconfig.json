@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "target": "es6",
+    "sourceMap": false,
+    "declaration": true,
+    "resolveJsonModule": true,
+    "module": "es6",
+    "moduleResolution": "nodenext",
+    "noImplicitAny": false,
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "noFallthroughCasesInSwitch": true,
+    "skipLibCheck": true,
+    "outDir": "./dist"
+  },
+  "include": ["src/**/*", "test/**/*"],
+  "exclude": ["./dist/**/*", "./node_modules", "./src/**/*.deno.ts"],
+  "ts-node": { "esm": true }
+}

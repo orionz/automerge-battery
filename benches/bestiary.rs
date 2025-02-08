@@ -10,7 +10,16 @@ fn main() {
     divan::main();
 }
 
-#[divan::bench(args=["./benches/embark.automerge","./benches/moby-dick.automerge"], max_time = Duration::from_secs(3))]
+const FILES : [&str;3] = [
+  "./benches/embark.automerge",
+  "./benches/moby-dick.automerge",
+  "./benches/monday-meeting-notes.automerge",
+  //"./benches/webstraits.amrg",
+  //"./benches/stephen.amrg",
+];
+const MAX : Duration = Duration::from_secs(3);
+
+#[divan::bench(args=FILES, max_time=MAX)]
 fn load(bencher: Bencher, filename: &str) {
     let data = std::fs::read(filename).unwrap();
     bencher.bench_local(|| {
@@ -18,7 +27,7 @@ fn load(bencher: Bencher, filename: &str) {
     })
 }
 
-#[divan::bench(args=["./benches/embark.automerge","./benches/moby-dick.automerge"], max_time = Duration::from_secs(3))]
+#[divan::bench(args=FILES, max_time=MAX)]
 fn save(bencher: Bencher, filename: &str) {
     let data = std::fs::read(filename).unwrap();
     let doc = Automerge::load(data.as_slice()).unwrap();

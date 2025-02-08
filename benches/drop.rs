@@ -9,7 +9,7 @@ use divan::AllocProfiler;
 #[global_allocator]
 static ALLOC: AllocProfiler = AllocProfiler::system();
 
-const N: u64 = 10_000;
+const N: u64 = 100_000;
 
 fn main() {
     divan::main();

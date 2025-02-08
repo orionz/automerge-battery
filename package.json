@@ -1,0 +1,31 @@
+{
+  "name": "automerge-battery",
+  "version": "1.0.0",
+  "scripts": {
+    "test": "ts-mocha --loader=ts-node/esm --experimental-specifier-resolution=node --timeout 60000 --type-check test/*.ts",
+    "build": "tsc test/test.ts",
+    "prof": "0x -D prof index/splice.js && open prof/flamegraph.html"
+  },
+  "type":"module",
+  "devDependencies": {
+    "@automerge/automerge": "3.0.0-preview.2",
+    "@types/expect": "^24.3.0",
+    "@types/mocha": "^10.0.1",
+    "@types/node": "^20.5.7",
+    "@types/uuid": "^9.0.0",
+    "@typescript-eslint/eslint-plugin": "^5.46.0",
+    "@typescript-eslint/parser": "^5.46.0",
+    "consola": "^3.2.3",
+    "esbuild": "^0.19.2",
+    "eslint": "^8.29.0",
+    "mocha": "^10.2.0",
+    "ts-mocha": "^10.0.0",
+    "ts-node": "^10.9.1",
+    "typedoc": "^0.23.22",
+    "typescript": "^4.9.4",
+    "0x": "^5.4.1"
+  },
+  "repository": "git@github.com:orionz/automerge-battery.git",
+  "author": "Orion Henry <orion.henry@gmail.com>",
+  "license": "MIT"
+}
