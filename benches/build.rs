@@ -1,6 +1,5 @@
 use automerge_battery::{
-    big_paste_doc, big_random_chunky_doc, maps_in_maps_doc,
-    deep_history_doc, poorly_simulated_typing_doc,
+    big_paste_doc, deep_history_doc, maps_in_maps_doc, poorly_simulated_typing_doc, text_splice_100,
 };
 use divan::{black_box, Bencher};
 use std::time::Duration;
@@ -21,7 +20,7 @@ fn build_typing(bencher: Bencher) {
 
 #[inline(never)]
 #[divan::bench(max_time = Duration::from_secs(3))]
-fn build_big_test(bencher: Bencher) {
+fn build_big_paste(bencher: Bencher) {
     bencher.bench_local(|| {
         black_box(big_paste_doc(N));
     })
@@ -29,9 +28,9 @@ fn build_big_test(bencher: Bencher) {
 
 #[inline(never)]
 #[divan::bench(max_time = Duration::from_secs(3))]
-fn build_big_random_chunky_doc(bencher: Bencher) {
+fn build_text_splice_100(bencher: Bencher) {
     bencher.bench_local(|| {
-        black_box(big_random_chunky_doc(N));
+        black_box(text_splice_100(N));
     })
 }
 

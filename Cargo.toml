@@ -5,7 +5,7 @@ edition = "2021"
 
 [dependencies]
 automerge = { path = "../automerge/rust/automerge" }
-packer = { path = "../automerge/rust/packer" }
+#packer = { path = "../automerge/rust/packer" }
 rand = "0.8.5"
 
 [dev-dependencies]
@@ -41,7 +41,7 @@ name = "edit_trace"
 harness = false
 
 [[bench]]
-name = "drop"
+name = "mem"
 harness = false
 
 [[bench]]
@@ -49,9 +49,9 @@ name = "build"
 harness = false
 
 [[bench]]
-name = "fork"
+name = "apply"
 harness = false
 
-[[bench]]
-name = "packer"
-harness = false
+#--[[bench]]
+#--name = "packer"
+#--harness = false

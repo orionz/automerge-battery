@@ -10,14 +10,14 @@ fn main() {
     divan::main();
 }
 
-const FILES : [&str;3] = [
-  "./benches/embark.automerge",
-  "./benches/moby-dick.automerge",
-  "./benches/monday-meeting-notes.automerge",
-  //"./benches/webstraits.amrg",
-  //"./benches/stephen.amrg",
+const FILES: [&str; 3] = [
+    "./benches/embark.automerge",
+    "./benches/moby-dick.automerge",
+    "./benches/monday-meeting-notes.automerge",
+    //"./benches/webstraits.amrg",
+    //"./benches/stephen.amrg",
 ];
-const MAX : Duration = Duration::from_secs(3);
+const MAX: Duration = Duration::from_secs(3);
 
 #[divan::bench(args=FILES, max_time=MAX)]
 fn load(bencher: Bencher, filename: &str) {

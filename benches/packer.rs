@@ -1,3 +1,4 @@
+/*
 use divan::Bencher;
 use packer::*;
 use std::time::Duration;
@@ -280,3 +281,4 @@ fn save_raw(bencher: Bencher) {
         col.save();
     });
 }
+*/

@@ -85,7 +85,7 @@ pub fn big_random_doc(n: u64) -> Automerge {
 }
 
 #[inline(never)]
-pub fn big_random_chunky_doc(n: u64) -> Automerge {
+pub fn text_splice_100(n: u64) -> Automerge {
     let mut doc = Automerge::new();
     let mut tx = doc.transaction();
     let text = tx.put_object(ROOT, "content", ObjType::Text).unwrap();

@@ -1,7 +1,6 @@
 use automerge::Automerge;
 use automerge_battery::{
-    big_paste_doc, big_random_chunky_doc, big_random_doc, maps_in_maps_doc,
-    poorly_simulated_typing_doc,
+    big_paste_doc, big_random_doc, maps_in_maps_doc, poorly_simulated_typing_doc, text_splice_100,
 };
 use divan::Bencher;
 use std::time::Duration;
@@ -53,8 +52,8 @@ fn load_big_paste(bencher: Bencher) {
 
 #[inline(never)]
 #[divan::bench(max_time = Duration::from_secs(3))]
-fn load_chunky(bencher: Bencher) {
-    let data = big_random_chunky_doc(N).save();
+fn load_text_splice_100(bencher: Bencher) {
+    let data = text_splice_100(N).save();
     bencher.bench_local(|| {
         Automerge::load(data.as_slice()).unwrap();
     })
@@ -62,8 +61,8 @@ fn load_chunky(bencher: Bencher) {
 
 #[inline(never)]
 #[divan::bench(max_time = Duration::from_secs(3))]
-fn save_chunky(bencher: Bencher) {
-    let doc = big_random_chunky_doc(N);
+fn save_text_splice_100(bencher: Bencher) {
+    let doc = text_splice_100(N);
     bencher.bench_local(|| -> Vec<u8> { doc.save() })
 }
 
@@ -74,6 +73,13 @@ fn load_big_random_test(bencher: Bencher) {
     bencher.bench_local(|| {
         Automerge::load(data.as_slice()).unwrap();
     })
+}
+
+#[inline(never)]
+#[divan::bench(max_time = Duration::from_secs(3))]
+fn save_big_random_test(bencher: Bencher) {
+    let doc = big_random_doc(N);
+    bencher.bench_local(|| -> Vec<u8> { doc.save() })
 }
 
 #[inline(never)]
