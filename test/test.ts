@@ -42,4 +42,19 @@ describe("Automerge Battery", () => {
         //console.log(doc)
     })
   })
+  describe.only("from string performance", () => {
+      console.log("AUTOMERGE ", Automerge.stats(Automerge.init()));
+      let lengths = [1e1, 1e2, 1e3, 1e4, 1e5, 1e6];
+      let strings : string[] = lengths.map(n => getRandomString(n));
+      for (let s of strings) {
+        bench(`from ${s.length}`, () => Automerge.from({ s }));
+      }
+  })
 })
+
+
+function getRandomString(length: number) : string {
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  return Array.from({ length }).reduce((acc: string, next) => acc + characters.charAt(Math.floor(Math.random() * characters.length)), '');
+}
+

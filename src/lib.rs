@@ -8,8 +8,6 @@ pub struct TestItem<T> {
     pub item: T,
 }
 
-//impl<T> Arg<&T> for TestItem<T> { }
-
 impl<T> TestItem<T> {
     pub fn new<S: Into<String>>(label: S, item: T) -> TestItem<T> {
         Self {

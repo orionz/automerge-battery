@@ -4,7 +4,7 @@
   "scripts": {
     "test": "ts-mocha --loader=ts-node/esm --experimental-specifier-resolution=node --timeout 60000 --type-check test/*.ts",
     "build": "tsc test/test.ts",
-    "prof": "0x -D prof index/splice.js && open prof/flamegraph.html"
+    "prof": "0x -D prof index/stephen.js && open prof/flamegraph.html"
   },
   "type":"module",
   "devDependencies": {
