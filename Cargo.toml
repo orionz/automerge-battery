@@ -5,8 +5,11 @@ edition = "2021"
 
 [dependencies]
 automerge = { path = "../automerge/rust/automerge" }
-#packer = { path = "../automerge/rust/packer" }
+#automerge = "1.0.0-alpha.0"
+#automerge = "0.6.0"
+hexane = { path = "../automerge/rust/hexane" }
 rand = "0.8.5"
+trace-alloc = { path = "../diamond-types/crates/trace-alloc", features = [ "memusage" ] }
 
 [dev-dependencies]
 divan = "0.1.15"
@@ -50,6 +53,14 @@ harness = false
 
 [[bench]]
 name = "apply"
+harness = false
+
+[[bench]]
+name = "egwalker_paper"
+harness = false
+
+[[bench]]
+name = "typing"
 harness = false
 
 #--[[bench]]
