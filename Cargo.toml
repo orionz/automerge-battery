@@ -5,9 +5,10 @@ edition = "2021"
 
 [dependencies]
 automerge = { path = "../automerge/rust/automerge" }
-#automerge = "1.0.0-alpha.0"
+#automerge = "1.0.0-alpha.4"
 #automerge = "0.6.0"
 hexane = { path = "../automerge/rust/hexane" }
+getrandom = "0.3.3"
 rand = "0.8.5"
 trace-alloc = { path = "../diamond-types/crates/trace-alloc", features = [ "memusage" ] }
 
@@ -61,6 +62,14 @@ harness = false
 
 [[bench]]
 name = "typing"
+harness = false
+
+[[bench]]
+name = "marks"
+harness = false
+
+[[bench]]
+name = "length"
 harness = false
 
 #--[[bench]]

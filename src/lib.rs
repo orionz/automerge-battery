@@ -71,10 +71,9 @@ pub fn big_random_doc(n: u64) -> Automerge {
     let mut doc = Automerge::new();
     let mut tx = doc.transaction();
     let text = tx.put_object(ROOT, "content", ObjType::Text).unwrap();
-    tx.splice_text(&text, 0, 0, &random_string(1)).unwrap();
-    let mut len = 1;
+    let mut len = 0;
     for _ in 0..n {
-        let pos = thread_rng().next_u32() as usize % len;
+        let pos = thread_rng().next_u32() as usize % (len + 1);
         tx.splice_text(&text, pos, 0, &random_string(1)).unwrap();
         len += 1;
     }
@@ -87,11 +86,27 @@ pub fn text_splice_100(n: u64) -> Automerge {
     let mut doc = Automerge::new();
     let mut tx = doc.transaction();
     let text = tx.put_object(ROOT, "content", ObjType::Text).unwrap();
-    tx.splice_text(&text, 0, 0, &random_string(1)).unwrap();
-    let mut len = 1;
+    let mut len = 0;
     for _ in 0..(n / 100) {
-        let pos = thread_rng().next_u32() as usize % len;
+        let pos = thread_rng().next_u32() as usize % (len + 1);
         tx.splice_text(&text, pos, 0, &random_string(100)).unwrap();
+        len += 1;
+    }
+    tx.commit();
+    doc
+}
+
+#[inline(never)]
+pub fn list_splice_100(n: u64) -> Automerge {
+    let mut doc = Automerge::new();
+    let mut tx = doc.transaction();
+    let list = tx.put_object(ROOT, "content", ObjType::List).unwrap();
+    let mut len = 0;
+    for _ in 0..(n / 100) {
+        let pos = thread_rng().next_u32() as usize % (len + 1);
+        let string = random_string(100);
+        let letters = string.chars().map(|c| c.into());
+        tx.splice(&list, pos, 0, letters).unwrap();
         len += 1;
     }
     tx.commit();
