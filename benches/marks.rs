@@ -19,10 +19,9 @@ fn main() {
 
 #[divan::bench(max_time = Duration::from_secs(3))]
 fn add_mark(bencher: Bencher) {
-    let doc = text_splice_100(N);
+    let mut doc = text_splice_100(N);
     bencher.bench_local(|| {
-        let mut d = doc.fork();
-        add_random_marks(&mut d);
+        add_random_marks(&mut doc, 1);
     });
 }
 
@@ -32,22 +31,23 @@ fn rand() -> usize {
     usize::from_ne_bytes(buf)
 }
 
-fn add_random_marks(d: &mut Automerge) {
+fn add_random_marks(d: &mut Automerge, num: usize) {
     let (_, text) = d.get(ROOT, "content").unwrap().unwrap();
     let mut tx = d.transaction();
-    for i in 0..1000 {
-        let len = tx.length(&text);
+    let len = tx.length(&text);
+    for i in 0..num {
         let a = rand() % len;
         let b = rand() % len;
         let mark = Mark::new(format!("mark{}", i), true, min(a, b), max(a, b));
-        tx.mark(&text, mark, ExpandMark::Both).unwrap()
+        tx.mark(&text, mark, ExpandMark::Both).unwrap();
     }
+    tx.commit();
 }
 
 #[divan::bench(max_time = Duration::from_secs(3))]
 fn splice_with_marks(bencher: Bencher) {
     let mut doc = text_splice_100(N);
-    add_random_marks(&mut doc);
+    add_random_marks(&mut doc, 1000);
     let (_, text) = doc.get(ROOT, "content").unwrap().unwrap();
     bencher.bench_local(|| {
         let mut d = doc.fork();
