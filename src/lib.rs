@@ -143,3 +143,10 @@ pub fn deep_history_doc(n: u64) -> Automerge {
 
     doc
 }
+
+
+pub fn rand() -> usize {
+    let mut buf = [0u8; size_of::<usize>()];
+    getrandom::fill(&mut buf).unwrap();
+    usize::from_ne_bytes(buf)
+}

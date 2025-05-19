@@ -72,6 +72,10 @@ harness = false
 name = "length"
 harness = false
 
+[[bench]]
+name = "list"
+harness = false
+
 #--[[bench]]
 #--name = "packer"
 #--harness = false

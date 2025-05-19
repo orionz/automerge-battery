@@ -1,6 +1,6 @@
 use automerge::transaction::Transactable;
 use automerge::{Automerge, ReadDoc, ROOT};
-use automerge_battery::{list_splice_100, text_splice_100};
+use automerge_battery::{rand, list_splice_100, text_splice_100};
 use divan::Bencher;
 use getrandom;
 use std::time::Duration;
@@ -81,8 +81,3 @@ fn map_len_at(bencher: Bencher) {
     bencher.bench_local(|| assert_eq!(doc.length_at(&ROOT, &heads), N as usize));
 }
 
-fn rand() -> usize {
-    let mut buf = [0u8; size_of::<usize>()];
-    getrandom::fill(&mut buf).unwrap();
-    usize::from_ne_bytes(buf)
-}
