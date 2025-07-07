@@ -1,6 +1,8 @@
 import * as fs from "fs";
 import { next as Automerge } from "@automerge/automerge"
 
+console.log(Automerge.stats(Automerge.init()));
+
 function bench(action, f) {
   const start = performance.now();
   let result = f()

@@ -40,6 +40,36 @@ fn list_cursor_at(bencher: Bencher) {
 }
 
 #[divan::bench(max_time = Duration::from_secs(3))]
+fn list_update_at(bencher: Bencher) {
+    let mut doc = list_splice_100(N);
+    let len = N as usize;
+    let (_, list) = doc.get(ROOT, "content").unwrap().unwrap();
+    let head = doc.get_heads();
+    let mut heads = vec![head];
+    bencher.bench_local(|| {
+      let pos = rand() % len;
+      let h = rand() % heads.len();
+      let mut tx = doc.transaction_at(PatchLog::null(), &heads[h]);
+      tx.put(&list, pos, "x").unwrap();
+      tx.commit();
+      heads.push(doc.get_heads());
+    });
+}
+
+#[divan::bench(max_time = Duration::from_secs(3))]
+fn list_update_now(bencher: Bencher) {
+    let mut doc = list_splice_100(N);
+    let len = N as usize;
+    let (_, list) = doc.get(ROOT, "content").unwrap().unwrap();
+    bencher.bench_local(|| {
+      let pos = rand() % len;
+      let mut tx = doc.transaction();
+      tx.put(&list, pos, "x").unwrap();
+      tx.commit();
+    });
+}
+
+#[divan::bench(max_time = Duration::from_secs(3))]
 fn list_splice_index_now(bencher: Bencher) {
     let mut doc = list_splice_100(N);
     let len = N as usize;
